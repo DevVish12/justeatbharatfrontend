@@ -1,5 +1,5 @@
 const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+    import.meta.env.VITE_API_BASE_URL || "https://justeatbharat.com/api";
 
 export const ADMIN_TOKEN_KEY = "admin_access_token";
 

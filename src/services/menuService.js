@@ -1,4 +1,4 @@
-const MENU_URL = "http://localhost:5000/api/petpooja/menu";
+const MENU_URL = "https://justeatbharat.com/api/petpooja/menu";
 const FALLBACK_IMAGE = "/images/food-placeholder.jpg";
 
 const ATTRIBUTE_VEG = "1";

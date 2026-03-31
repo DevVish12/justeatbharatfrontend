@@ -37,7 +37,7 @@ export const getImage = (key) => {
     if (typeof key === "string") {
         const trimmed = key.trim();
         if (trimmed.startsWith("/uploads/")) {
-            const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+            const apiBase = import.meta.env.VITE_API_BASE_URL || "https://justeatbharat.com/api";
             const backendOrigin = String(apiBase).replace(/\/api\/?$/, "");
             return `${backendOrigin}${trimmed}`;
         }
