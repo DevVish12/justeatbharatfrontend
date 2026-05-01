@@ -258,6 +258,11 @@ export const getProcessedMenu = async ({ signal } = {}) => {
         // Drop items that don't have a usable id/name.
         .filter((it) => it.id && it.name);
 
+    // Debug: verify custom_image is coming through from backend after refresh.
+    for (const item of mappedItems) {
+        console.log(item.id, item.custom_image);
+    }
+
     // If a category name couldn't be resolved, keep it stable.
     for (const item of mappedItems) {
         if (!item.category) item.category = "Uncategorized";

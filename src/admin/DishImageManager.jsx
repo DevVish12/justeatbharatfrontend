@@ -10,7 +10,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-const MAX_SIZE_BYTES = 300 * 1024;
+const MAX_SIZE_BYTES = 5 * 1024 * 1024;
 
 const DishImageManager = () => {
   const navigate = useNavigate();
@@ -140,7 +140,7 @@ const DishImageManager = () => {
     }
 
     if (file.size > MAX_SIZE_BYTES) {
-      toast.error("Image must be smaller than 300KB");
+      toast.error("Image must be smaller than 5MB");
       return;
     }
 
@@ -199,7 +199,7 @@ const DishImageManager = () => {
       }
 
       if (file.size > MAX_SIZE_BYTES) {
-        toast.error(`Rejected ${file.name}: must be smaller than 300KB`);
+        toast.error(`Rejected ${file.name}: must be smaller than 5MB`);
         continue;
       }
 

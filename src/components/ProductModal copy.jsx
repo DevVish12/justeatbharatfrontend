@@ -231,7 +231,7 @@ const ProductModal = ({ item, onClose }) => {
         >
           <img
             className="dish-img product-modal-img"
-            src={getImage(item.image)}
+            src={getImage(item.custom_image || item.image)}
             alt={item.name}
             style={{
               width: "100%",

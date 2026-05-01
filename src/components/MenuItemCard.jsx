@@ -112,7 +112,7 @@ const MenuItemCard = ({ item, onItemClick, onQuickAdd }) => {
           {/* RIGHT IMAGE */}
           <div className="relative w-[145px] flex-shrink-0 self-stretch rounded-r-2xl overflow-hidden">
             <img
-              src={getImage(item.image)}
+              src={getImage(item.custom_image || item.image)}
               alt={item.name}
               className="w-full h-full object-cover"
               loading="lazy"
@@ -272,7 +272,7 @@ const MenuItemCard = ({ item, onItemClick, onQuickAdd }) => {
           <div className="flex flex-col items-center flex-shrink-0">
             <div className="relative w-[130px] h-[130px] sm:w-[132px] sm:h-[132px] md:w-[140px] md:h-[140px]">
               <img
-                src={getImage(item.image)}
+                src={getImage(item.custom_image || item.image)}
                 alt={item.name}
                 className="w-full h-full object-cover rounded-[18px]"
                 loading="lazy"

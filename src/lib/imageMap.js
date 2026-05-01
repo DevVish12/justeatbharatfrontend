@@ -36,6 +36,13 @@ export const getImage = (key) => {
     // If backend provides a real URL/path, use it directly.
     if (typeof key === "string") {
         const trimmed = key.trim();
+        if (!trimmed) return pizza1;
+
+        // Project historically used this placeholder path; map it to an actual public asset.
+        if (trimmed === "/images/food-placeholder.jpg") {
+            return "/placeholder.svg";
+        }
+
         if (trimmed.startsWith("/uploads/")) {
             const apiBase = import.meta.env.VITE_API_BASE_URL || "https://justeatbharat.com/api";
             const backendOrigin = String(apiBase).replace(/\/api\/?$/, "");
