@@ -559,13 +559,15 @@ const DishImageManager = () => {
                             const itemId = item.id;
                             const previewUrl =
                               selected[itemId]?.previewUrl || "";
-                            const currentSrc =
-                              previewUrl ||
-                              getImage(
-                                item.custom_image ||
-                                  item.item_image_url ||
-                                  item.image,
-                              );
+                            const currentSrc = previewUrl
+                              ? previewUrl
+                              : (getImage(
+                                  item.custom_image ||
+                                    item.item_image_url ||
+                                    item.image,
+                                ) || "") +
+                                "?v=" +
+                                (item.image_updated_at || Date.now());
 
                             return (
                               <tr

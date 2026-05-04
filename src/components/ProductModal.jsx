@@ -317,7 +317,11 @@ const ProductModal = ({ item, onClose }) => {
           >
             {!imgLoaded && <div className="img-shimmer" />}
               <img
-                src={getImage(item.custom_image || item.image)}
+                src={
+                  (getImage(item.custom_image || item.image) || "") +
+                  "?v=" +
+                  (item.image_updated_at || Date.now())
+                }
               alt={item.name}
               onLoad={() => setImgLoaded(true)}
               style={{

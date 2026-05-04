@@ -318,7 +318,11 @@ const BestsellerStrip = ({ items, onItemClick, onQuickAdd }) => {
                   >
                     <img
                       className="bs-image"
-                      src={getImage(item.custom_image || item.image)}
+                      src={
+                        (getImage(item.custom_image || item.image) || "") +
+                        "?v=" +
+                        (item.image_updated_at || Date.now())
+                      }
                       alt={item.name}
                       style={{
                         width: "100%",

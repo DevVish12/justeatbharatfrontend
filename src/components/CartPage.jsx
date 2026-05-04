@@ -905,7 +905,12 @@ const CartPage = () => {
                             >
                               <img
                                 className="cm-image"
-                                src={getImage(it.custom_image || it.image)}
+                                src={
+                                  (getImage(it.custom_image || it.image) ||
+                                    "") +
+                                  "?v=" +
+                                  (it.image_updated_at || Date.now())
+                                }
                                 alt={it.name}
                                 style={{
                                   width: "100%",
