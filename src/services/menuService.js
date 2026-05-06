@@ -69,13 +69,27 @@ const extractTags = (value) => {
 };
 
 const mapVariants = (variationValue) => {
-    return safeArray(variationValue)
-        .map((v) => ({
-            id: toString(v?.variationid ?? v?.id),
-            name: toString(v?.name),
-            price: normalizePrice(v?.price),
-        }))
-        .filter((v) => v.name);
+    // STEP 5 — SAFE FRONTEND VARIANT PARSER
+    let value = variationValue;
+
+    // Backend may send JSON string for LONGTEXT/JSON.
+    if (typeof value === "string") {
+        try {
+            value = JSON.parse(value || "[]");
+        } catch {
+            value = [];
+        }
+    }
+
+    return Array.isArray(value)
+        ? value
+              .map((v) => ({
+                  id: String(v?.variationid || v?.id || ""),
+                  name: String(v?.name || ""),
+                  price: Number(v?.price || 0),
+              }))
+              .filter((v) => v.name)
+        : [];
 };
 
 const mapAddons = (addonValue) => {

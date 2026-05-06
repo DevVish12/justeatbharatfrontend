@@ -92,7 +92,7 @@ const MenuItemCard = ({ item, onItemClick, onQuickAdd }) => {
               )}
               <span className="text-[15px] font-bold text-gray-900">
                 ₹{displayPrice}
-                {hasVariants && " onwards"}
+                {hasVariants && Number(item?.price || 0) === 0 && " onwards"}
               </span>
               {savings > 0 && (
                 <span className="text-[11px] font-bold text-white bg-orange-500 px-[6px] py-[2px] rounded-md">

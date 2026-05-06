@@ -386,6 +386,8 @@ const CartPage = () => {
             id: ci.menuItem.id,
             name: ci.menuItem.name,
             variant: ci.variant?.name || "",
+            variation_name: ci.variant?.name || "",
+            variation_id: ci.variant?.id || "",
             quantity: ci.quantity,
             price,
           };
