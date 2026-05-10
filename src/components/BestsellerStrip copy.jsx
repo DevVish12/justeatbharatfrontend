@@ -8,15 +8,11 @@ const getDisplayPrice = (item) => {
     const prices = item.variants
       .map((v) => Number(v?.price))
       .filter((n) => Number.isFinite(n));
+
     if (prices.length > 0) return Math.min(...prices);
   }
   return item?.price;
 };
-
-// ── Theme ──────────────────────────────────────────────────
-const BG      = "#FBF3EE";   // warm cream background
-const PRIMARY = "#E8590C";   // JustEat orange
-const PRIMARY_LIGHT = "#FFF4EE";
 
 const BestsellerStrip = ({ items, onItemClick, onQuickAdd }) => {
   const scrollRef = useRef(null);
@@ -34,32 +30,27 @@ const BestsellerStrip = ({ items, onItemClick, onQuickAdd }) => {
   return (
     <>
       <style>{`
-        /* ── hide scrollbar ── */
         .bs-scroll::-webkit-scrollbar { display: none; }
-
-        /* ── card hover ── */
-        .bs-card:hover {
-          box-shadow: 0 14px 30px rgba(148,163,184,0.24),
-                      0 4px 10px rgba(148,163,184,0.16) !important;
+        .bs-card:hover { box-shadow: 0 14px 30px rgba(148,163,184,0.24), 0 4px 10px rgba(148,163,184,0.16) !important; }
+        .bs-addbtn:hover { background-color: #F9FAFB !important; }
+        .bs-card {
+          width: 260px;
+          min-height: 375px;
+        }
+        .bs-image {
+          height: 250px;
         }
 
-        /* ── ADD button hover ── */
-        .bs-addbtn:hover {
-          background-color: ${PRIMARY_LIGHT} !important;
-          border-color: ${PRIMARY} !important;
-        }
-
-        /* ── base card ── */
-        .bs-card  { width: 260px; min-height: 360px; }
-        .bs-image { height: 220px; }
-
-        /* ── tablet ── */
         @media (max-width: 1024px) {
-          .bs-card  { width: clamp(190px, 30vw, 230px); min-height: 330px; }
-          .bs-image { height: 200px; }
+          .bs-card {
+            width: clamp(190px, 30vw, 230px);
+            min-height: 340px;
+          }
+          .bs-image {
+            height: 210px;
+          }
         }
 
-        /* ── mobile md ── */
         @media (max-width: 768px) {
           .bs-outer {
             width: 100vw !important;
@@ -72,123 +63,186 @@ const BestsellerStrip = ({ items, onItemClick, onQuickAdd }) => {
             padding-right: 12px !important;
             gap: 10px !important;
           }
-          .bs-card  { width: clamp(150px, 42vw, 185px); min-height: 290px; }
-          .bs-image { height: 160px; }
-          .bs-content { padding: 8px 10px 10px !important; }
-          .bs-name    { margin-top: 8px !important; font-size: 13px !important; }
-          .bs-title   {
-            font-size: 14px !important;
-            letter-spacing: 2.5px !important;
+          .bs-card {
+            width: clamp(150px, 42vw, 185px);
+            min-height: 300px;
+          }
+          .bs-image {
+            height: 170px;
+          }
+          .bs-content {
+            padding: 8px 12px 10px !important;
+          }
+          .bs-name {
+            margin-top: 10px !important;
+          }
+          .bs-title {
+            font-size: 15px !important;
+            line-height: 18px !important;
+            letter-spacing: 0.16em !important;
             margin-bottom: 10px !important;
           }
-          .bs-tag     { font-size: 10px !important; padding: 3px 8px !important; }
-          .bs-price   { font-size: 13px !important; }
-          .bs-price-row { padding-top: 10px !important; }
-          .bs-addbtn  {
-            font-size: 11px !important;
-            padding: 6px 12px !important;
-            border-radius: 8px !important;
+          .bs-tag {
+            font-size: 10px !important;
+            padding: 3px 10px !important;
           }
-          .bs-qtybtn  { padding: 4px 9px !important; }
-          .bs-qtytext { font-size: 12px !important; padding: 0 8px !important; }
+          .bs-price {
+            font-size: 14px !important;
+          }
+          .bs-price-row {
+            padding-top: 12px !important;
+          }
+          .bs-addbtn {
+            font-size: 12px !important;
+            padding: 7px 14px !important;
+            border-radius: 7px !important;
+          }
+          .bs-qtybtn {
+            padding: 4px 9px !important;
+          }
+          .bs-qtytext {
+            font-size: 13px !important;
+            padding: 0 9px !important;
+          }
         }
 
-        /* ── mobile sm — matches screenshot exactly ── */
         @media (max-width: 480px) {
+          /* Card — wider, clean white, subtle shadow like Image 2 */
           .bs-card {
-            width: clamp(140px, 44vw, 162px) !important;
-            min-height: 210px !important;
+            width: clamp(140px, 44vw, 160px) !important;
+            min-height: 200px !important;
             border-radius: 14px !important;
-            border: 1px solid #f0ece8 !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07) !important;
+            overflow: hidden;
+            border: 1px solid #f0f0f0 !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
             background: #fff !important;
           }
-          .bs-card > div:first-child { padding: 0 !important; }
+          
+
+          /* Remove image wrapper padding — image flush to top */
+          .bs-card > div:first-child {
+            padding: 0 !important;
+          }
+
+          /* Image fills full width, rounded top corners only */
           .bs-image {
-            height: 140px !important;
+            height: 150px !important;
             width: 100% !important;
-            border-radius: 14px 14px 0 0 !important;
             object-fit: cover;
+            border-radius: 14px 14px 0 0 !important;
           }
-          .bs-content  { padding: 7px 9px 10px !important; }
-          .bs-tag      {
+
+          /* Content area */
+          .bs-content {
+            padding: 7px 10px 10px !important;
+          }
+
+          /* Bestseller tag — small green dot + text like Image 2 */
+          .bs-tag {
             font-size: 9px !important;
-            padding: 2px 6px !important;
+            padding: 2px 5px !important;
             border-radius: 4px !important;
+            background: #F3F0ED !important;
           }
+
+          /* Item name */
           .bs-name {
             margin-top: 4px !important;
             font-size: 12px !important;
             font-weight: 600 !important;
-            line-height: 15px !important;
+            line-height: 14px !important;
+            color: #1A1A1A;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
           }
+
+          /* Price row — price left, ADD right */
           .bs-price-row {
             padding-top: 6px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
           }
+
           .bs-price {
             font-size: 13px !important;
             font-weight: 700 !important;
+            color: #1A1A1A !important;
           }
-          /* orange ADD+ on small screens */
+
+          /* ADD button */
           .bs-addbtn {
             font-size: 10px !important;
-            font-weight: 700 !important;
-            padding: 5px 10px !important;
-            border-radius: 7px !important;
-            border: 1.5px solid ${PRIMARY} !important;
+            font-weight: 600 !important;
+            padding: 4px 10px !important;
+            border-radius: 6px !important;
+            border: 1px solid #d4d4d4 !important;
             background: #fff !important;
-            color: ${PRIMARY} !important;
+            color: #1A1A1A !important;
           }
-          .bs-qtybtn  { padding: 2px 7px !important; }
-          .bs-qtytext { font-size: 12px !important; padding: 0 6px !important; font-weight: 600 !important; }
+
+          /* Qty stepper */
+          .bs-price-row div {
+            display: flex !important;
+            align-items: center !important;
+            height: 24px !important;
+            border-radius: 20px !important;
+            border: 1px solid #e5e5e5 !important;
+            background: #fff !important;
+          }
+
+          .bs-qtybtn {
+            padding: 2px 7px !important;
+          }
+
+          .bs-qtytext {
+            font-size: 12px !important;
+            padding: 0 6px !important;
+            font-weight: 600 !important;
+          }
         }
       `}</style>
 
-      {/* ── OUTER WRAPPER ── */}
+      {/* OUTER WRAPPER */}
       <div
         className="bs-outer"
         style={{
-          background: BG,
+          background: "#F9F6F4",
           width: "100%",
-          paddingTop: "16px",
-          paddingBottom: "4px",
-          borderRadius: "14px",
+          paddingTop: "8px",
+          borderRadius: "12px",
           overflow: "hidden",
         }}
       >
-        {/* ── TITLE ── */}
+        {/* TITLE */}
         <h2
           className="bs-title"
           style={{
             textAlign: "center",
             textTransform: "uppercase",
-            marginBottom: "14px",
-            marginTop: 0,
+            marginBottom: "12px",
+            marginTop: "0px",
             fontFamily: "Inter, sans-serif",
-            fontSize: "16px",
-            fontWeight: 700,
+            fontSize: "18px",
+            fontWeight: 600,
             letterSpacing: "3px",
             color: "#1A1A1A",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "8px",
+            background: "#F9F6F4",
           }}
         >
-          <span style={{ fontSize: "18px" }}>⭐</span>
           BESTSELLERS
         </h2>
 
-        {/* ── SCROLL AREA ── */}
-        <div style={{ position: "relative", paddingLeft: "10px" }}>
-
+        {/* SCROLL AREA WRAPPER */}
+        <div
+          style={{
+            position: "relative",
+            background: "#F9F6F4",
+            paddingLeft: "10px",
+          }}
+        >
           {/* LEFT ARROW */}
           <button
             onClick={() => scroll("left")}
@@ -210,7 +264,7 @@ const BestsellerStrip = ({ items, onItemClick, onQuickAdd }) => {
               cursor: "pointer",
             }}
           >
-            <ChevronLeft size={18} color="#4B5563" />
+            <ChevronLeft size={20} color="#4B5563" />
           </button>
 
           {/* SCROLL TRACK */}
@@ -221,10 +275,10 @@ const BestsellerStrip = ({ items, onItemClick, onQuickAdd }) => {
               display: "flex",
               gap: "12px",
               overflowX: "auto",
-              background: BG,
+              background: "#F9F6F4",
               paddingLeft: "10px",
               paddingRight: "10px",
-              paddingBottom: "14px",
+              paddingBottom: "12px",
               scrollbarWidth: "none",
               msOverflowStyle: "none",
             }}
@@ -248,8 +302,8 @@ const BestsellerStrip = ({ items, onItemClick, onQuickAdd }) => {
                     flexShrink: 0,
                     background: "#ffffff",
                     borderRadius: "16px",
-                    border: "1px solid #EDE8E3",
-                    boxShadow: "0 2px 10px rgba(0,0,0,0.07)",
+                    border: "1px solid #e5e7eb",
+                    boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
                     cursor: "pointer",
                     transition: "box-shadow 0.3s",
                   }}
@@ -283,16 +337,22 @@ const BestsellerStrip = ({ items, onItemClick, onQuickAdd }) => {
                   <div
                     className="bs-content"
                     style={{
-                      padding: "8px 14px 12px",
+                      padding: "8px 16px 12px",
                       display: "flex",
                       flexDirection: "column",
                       flex: 1,
                       background: "#ffffff",
-                      borderRadius: "0 0 14px 14px",
+                      borderRadius: "0 0 12px 12px",
                     }}
                   >
-                    {/* VEG DOT + BESTSELLER BADGE */}
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                    {/* VEG TAG + BESTSELLER BADGE (match MenuItemCard mobile) */}
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
                       <span
                         style={{
                           width: "13px",
@@ -318,12 +378,12 @@ const BestsellerStrip = ({ items, onItemClick, onQuickAdd }) => {
                       <span
                         className="bs-tag"
                         style={{
-                          background: PRIMARY_LIGHT,
-                          padding: "3px 8px",
-                          borderRadius: "5px",
-                          fontSize: "11px",
-                          fontWeight: 600,
-                          color: PRIMARY,
+                          background: "#F3F0ED",
+                          padding: "4px 10px",
+                          borderRadius: "6px",
+                          fontSize: "12px",
+                          fontWeight: 500,
+                          color: "#1A1A1A",
                         }}
                       >
                         Bestseller
@@ -335,12 +395,11 @@ const BestsellerStrip = ({ items, onItemClick, onQuickAdd }) => {
                       className="bs-name"
                       style={{
                         fontFamily: "Inter, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 600,
+                        fontSize: "15px",
+                        fontWeight: 500,
                         color: "#1A1A1A",
-                        marginTop: "10px",
-                        marginBottom: 0,
-                        lineHeight: "17px",
+                        marginTop: "16px",
+                        lineHeight: "16.8px",
                       }}
                     >
                       {item.name}
@@ -354,36 +413,31 @@ const BestsellerStrip = ({ items, onItemClick, onQuickAdd }) => {
                         alignItems: "center",
                         justifyContent: "space-between",
                         marginTop: "auto",
-                        paddingTop: "14px",
+                        paddingTop: "16px",
                       }}
                     >
                       <span
                         className="bs-price"
                         style={{
-                          fontSize: "14px",
-                          fontWeight: 700,
+                          fontSize: "15px",
+                          fontWeight: 600,
                           color: "#1A1A1A",
                         }}
                       >
                         ₹{displayPrice}
-                        {hasVariants && (
-                          <span style={{ fontSize: "11px", fontWeight: 400, color: "#888" }}>
-                            {" "}onwards
-                          </span>
-                        )}
+                        {hasVariants && " onwards"}
                       </span>
 
-                      {/* QTY STEPPER */}
                       {qty > 0 ? (
                         <div
                           onClick={(e) => e.stopPropagation()}
                           style={{
                             display: "flex",
                             alignItems: "center",
-                            border: `1.5px solid ${PRIMARY}`,
+                            border: "1px solid #E5E5E5",
                             borderRadius: "9999px",
                             overflow: "hidden",
-                            background: PRIMARY_LIGHT,
+                            background: "#ffffff",
                           }}
                         >
                           <button
@@ -393,66 +447,85 @@ const BestsellerStrip = ({ items, onItemClick, onQuickAdd }) => {
                             }}
                             className="bs-qtybtn"
                             style={{
-                              padding: "4px 10px",
+                              padding: "4px 12px",
                               background: "none",
                               border: "none",
                               cursor: "pointer",
-                              color: PRIMARY,
                             }}
                           >
-                            <Minus size={13} color={PRIMARY} />
+                            <Minus size={14} />
                           </button>
                           <span
                             className="bs-qtytext"
                             style={{
-                              padding: "0 10px",
-                              fontSize: "13px",
-                              fontWeight: 700,
-                              color: PRIMARY,
+                              padding: "0 12px",
+                              fontSize: "14px",
+                              fontWeight: 500,
                             }}
                           >
                             {qty}
                           </span>
                           <button
+                            // onClick={(e) => {
+                            //   e.stopPropagation();
+                            //   onQuickAdd(item);
+                            // }}
                             onClick={(e) => {
                               e.stopPropagation();
-                              const hasVariants = item.variants && item.variants.length > 0;
-                              const hasAddons   = item.addons   && item.addons.length   > 0;
-                              if (hasVariants || hasAddons) onItemClick(item);
-                              else onQuickAdd(item);
+
+                              const hasVariants =
+                                item.variants && item.variants.length > 0;
+                              const hasAddons =
+                                item.addons && item.addons.length > 0;
+
+                              if (hasVariants || hasAddons) {
+                                onItemClick(item); // open modal
+                              } else {
+                                onQuickAdd(item); // direct add
+                              }
                             }}
                             className="bs-qtybtn"
                             style={{
-                              padding: "4px 10px",
+                              padding: "4px 12px",
                               background: "none",
                               border: "none",
                               cursor: "pointer",
                             }}
                           >
-                            <Plus size={13} color={PRIMARY} />
+                            <Plus size={14} />
                           </button>
                         </div>
                       ) : (
-                        /* ADD + BUTTON */
                         <button
                           className="bs-addbtn"
+                          //   onClick={(e) => {
+                          //     e.stopPropagation();
+                          //     onQuickAdd(item);
+                          //   }}
                           onClick={(e) => {
                             e.stopPropagation();
-                            const hasVariants = item.variants && item.variants.length > 0;
-                            const hasAddons   = item.addons   && item.addons.length   > 0;
-                            if (hasVariants || hasAddons) onItemClick(item);
-                            else onQuickAdd(item);
+
+                            const hasVariants =
+                              item.variants && item.variants.length > 0;
+                            const hasAddons =
+                              item.addons && item.addons.length > 0;
+
+                            if (hasVariants || hasAddons) {
+                              onItemClick(item);
+                            } else {
+                              onQuickAdd(item);
+                            }
                           }}
                           style={{
-                            fontSize: "12px",
-                            fontWeight: 700,
-                            border: `1.5px solid ${PRIMARY}`,
+                            fontSize: "13px",
+                            fontWeight: 500,
+                            border: "1px solid #333333",
                             borderRadius: "8px",
-                            padding: "7px 16px",
+                            padding: "8px 20px",
                             background: "#ffffff",
-                            color: PRIMARY,
+                            color: "#1A1A1A",
                             cursor: "pointer",
-                            transition: "background 0.2s, color 0.2s",
+                            transition: "background 0.2s",
                           }}
                         >
                           ADD +
@@ -486,7 +559,7 @@ const BestsellerStrip = ({ items, onItemClick, onQuickAdd }) => {
               cursor: "pointer",
             }}
           >
-            <ChevronRight size={18} color="#4B5563" />
+            <ChevronRight size={20} color="#4B5563" />
           </button>
         </div>
       </div>

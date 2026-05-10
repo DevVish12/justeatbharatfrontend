@@ -227,11 +227,11 @@ const MenuItemCard = ({ item, onItemClick, onQuickAdd }) => {
               </div>
             )}
 
-            <h3 className="text-[13px] sm:text-[14px] md:text-[15px] font-semibold text-[#1f1f1f] leading-tight line-clamp-2 mb-[3px] sm:mb-[4px] md:mb-[4px]">
+            <h3 className="text-[13px] sm:text-[14px] md:text-[15px] font-semibold text-[#1f1f1f] leading-tight line-clamp-2 mb-[2px] sm:mb-[3px] md:mb-[3px]">
               {item.name}
             </h3>
 
-            <div className="flex items-center gap-[6px] sm:gap-[7px] md:gap-[8px] mb-[4px] sm:mb-[5px] md:mb-[6px]">
+            <div className="flex items-center gap-[6px] sm:gap-[7px] md:gap-[8px] mb-[3px] sm:mb-[4px] md:mb-[4px]">
               {item.originalPrice && (
                 <span className="text-[12px] sm:text-[13px] md:text-[14px] text-gray-400 line-through">
                   ₹{item.originalPrice}
@@ -293,7 +293,7 @@ const MenuItemCard = ({ item, onItemClick, onQuickAdd }) => {
               )}
 
               <div
-                className="absolute bottom-[-12px] sm:bottom-[-14px] md:bottom-[-16px] left-1/2 -translate-x-1/2"
+                className="absolute bottom-[-8px] sm:bottom-[-10px] md:bottom-[-12px] left-1/2 -translate-x-1/2"
                 onClick={(e) => e.stopPropagation()}
               >
                 {!storeOpen ? <ClosedMessage /> : null}
@@ -357,7 +357,7 @@ const MenuItemCard = ({ item, onItemClick, onQuickAdd }) => {
             </div>
 
             {hasVariants && (
-              <p className="text-[11px] sm:text-[11.5px] md:text-[12px] text-gray-500 mt-[12px] sm:mt-[14px] md:mt-[18px]">
+              <p className="text-[11px] sm:text-[11.5px] md:text-[12px] text-gray-500 mt-[8px] sm:mt-[10px] md:mt-[12px]">
                 Customisable
               </p>
             )}

@@ -1,5 +1,5 @@
 import { apiRequest } from "@/services/api";
-import { Check, ChevronDown, Copy, X } from "lucide-react";
+import { Check, Copy, Tag, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 const getOfferText = (coupon) => {
@@ -11,7 +11,7 @@ const getOfferText = (coupon) => {
     return `Flat ₹${value || 0} off${min ? ` on orders above ₹${min}` : ""}`;
   }
   if (type === "percent") {
-    return `${value || 0}% off${min ? ` on orders above ₹${min}` : ""}`;
+    return `${value || 0}% OFF${min ? ` on orders above ₹${min}` : ""}`;
   }
   if (type === "free_item") {
     return `Free item${min ? ` on orders above ₹${min}` : ""}`;
@@ -58,103 +58,185 @@ const OffersStrip = () => {
 
   const sorted = useMemo(() => {
     return [...coupons].sort(
-      (a, b) => (Number(b.id) || 0) - (Number(a.id) || 0),
+      (a, b) => (Number(b.id) || 0) - (Number(a.id) || 0)
     );
   }, [coupons]);
 
-  // Show nothing if loading or error and no coupons
   if (isLoading || (error && sorted.length === 0)) return null;
   if (sorted.length === 0) return null;
 
   return (
     <>
+      {/* ── Offer Strip ── */}
       <button
         onClick={() => setShowModal(true)}
-        className="w-full flex items-center gap-3 bg-accent border rounded-lg px-3 py-2.5 hover:border-primary/40 transition-colors"
-        style={{ borderWidth: "1px", borderColor: "#E6E6E6" }}
+        className="w-full flex items-center gap-3 bg-white rounded-xl px-4 py-3 hover:shadow-md transition-shadow"
+        style={{
+          border: "1px solid #F0F0F0",
+          boxShadow: "0 1px 4px 0 rgba(0,0,0,0.06)",
+        }}
       >
-        <span className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-          <span className="text-primary font-black text-[10px]">%</span>
+        {/* Tag icon circle */}
+        <span
+          className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+          style={{ background: "#FFF3E8" }}
+        >
+          <Tag
+            className="w-4 h-4"
+            style={{ color: "#FF6B00", strokeWidth: 2 }}
+          />
         </span>
-        <div className="text-left flex-1 min-w-0">
-          <p className="text-xs font-semibold text-foreground truncate">
+
+        {/* Text block */}
+        <div className="flex-1 text-left min-w-0">
+          <p
+            className="text-sm font-semibold truncate"
+            style={{ color: "#1A1A1A" }}
+          >
             {getOfferText(sorted[0])}
           </p>
-          <p className="text-[10px] text-muted-foreground">
-            Use Code{" "}
-            <span className="font-bold text-primary">{sorted[0].code}</span>
+          <p className="text-xs mt-0.5" style={{ color: "#888" }}>
+            Use{" "}
+            <span className="font-bold" style={{ color: "#FF6B00" }}>
+              {sorted[0].code}
+            </span>
           </p>
         </div>
-        <div className="flex items-center gap-0.5 text-[10px] text-primary font-bold shrink-0">
-          {sorted.length} OFFERS <ChevronDown className="w-3 h-3" />
+
+        {/* Offers count */}
+        <div
+          className="flex items-center gap-0.5 text-xs font-bold shrink-0"
+          style={{ color: "#FF6B00" }}
+        >
+          {sorted.length} offers
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M9 18l6-6-6-6" />
+          </svg>
         </div>
       </button>
 
+      {/* ── Modal ── */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+          {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-foreground/50"
+            className="absolute inset-0"
+            style={{ background: "rgba(0,0,0,0.45)" }}
             onClick={() => {
               setShowModal(false);
               setSelectedCode(null);
             }}
           />
-          <div className="relative bg-card w-full max-w-md rounded-t-2xl sm:rounded-2xl max-h-[75vh] flex flex-col shadow-2xl animate-fade-in-up">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-              <h3 className="text-sm font-bold text-foreground">
-                Select a Coupon
+
+          {/* Sheet */}
+          <div
+            className="relative bg-white w-full max-w-lg rounded-t-3xl sm:rounded-2xl flex flex-col"
+            style={{
+              maxHeight: "80vh",
+              boxShadow: "0 -4px 30px rgba(0,0,0,0.15)",
+            }}
+          >
+            {/* Header */}
+            <div
+              className="flex items-center gap-2.5 px-5 py-4"
+              style={{ borderBottom: "1px solid #F0F0F0" }}
+            >
+              <Tag
+                className="w-5 h-5 shrink-0"
+                style={{ color: "#FF6B00", strokeWidth: 2 }}
+              />
+              <h3
+                className="flex-1 text-base font-bold"
+                style={{ color: "#1A1A1A" }}
+              >
+                Available Coupons
               </h3>
               <button
                 onClick={() => {
                   setShowModal(false);
                   setSelectedCode(null);
                 }}
-                className="text-muted-foreground"
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5" style={{ color: "#555" }} />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-3 space-y-2">
-              {sorted.map((offer) => (
-                <button
-                  key={offer.code}
-                  onClick={() => setSelectedCode(offer.code)}
-                  className={`w-full text-left flex items-center gap-3 p-3 rounded-lg border transition-all ${
-                    selectedCode === offer.code
-                      ? "border-primary bg-accent"
-                      : "border-border hover:border-primary/30"
-                  }`}
-                >
-                  <div
-                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                      selectedCode === offer.code
-                        ? "border-primary bg-primary"
-                        : "border-muted-foreground"
-                    }`}
+
+            {/* Coupon list */}
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+              {sorted.map((offer) => {
+                const isSelected = selectedCode === offer.code;
+                return (
+                  <button
+                    key={offer.code}
+                    onClick={() => setSelectedCode(offer.code)}
+                    className="w-full text-left flex items-center gap-4 p-4 rounded-2xl transition-all"
+                    style={{
+                      border: isSelected
+                        ? "1.5px solid #FF6B00"
+                        : "1.5px solid #EFEFEF",
+                      background: isSelected ? "#FFF9F5" : "#fff",
+                    }}
                   >
-                    {selectedCode === offer.code && (
-                      <Check className="w-2.5 h-2.5 text-primary-foreground" />
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium text-foreground">
-                      {getOfferText(offer)}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">
-                      Code:{" "}
-                      <span className="font-bold text-primary">
+                    {/* Radio */}
+                    <span
+                      className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
+                      style={{
+                        borderColor: isSelected ? "#FF6B00" : "#BDBDBD",
+                        background: isSelected ? "#FF6B00" : "transparent",
+                      }}
+                    >
+                      {isSelected && (
+                        <span
+                          className="w-2 h-2 rounded-full"
+                          style={{ background: "#fff" }}
+                        />
+                      )}
+                    </span>
+
+                    {/* Coupon info */}
+                    <div className="min-w-0">
+                      <p
+                        className="text-sm font-semibold leading-snug"
+                        style={{ color: "#1A1A1A" }}
+                      >
+                        {getOfferText(offer)}
+                      </p>
+                      <p
+                        className="text-xs font-bold mt-1 tracking-wide"
+                        style={{ color: "#FF6B00" }}
+                      >
                         {offer.code}
-                      </span>
-                    </p>
-                  </div>
-                </button>
-              ))}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
-            <div className="p-3 border-t border-border">
+
+            {/* Footer CTA */}
+            <div
+              className="px-4 py-4"
+              style={{ borderTop: "1px solid #F0F0F0" }}
+            >
               <button
                 onClick={handleCopy}
                 disabled={!selectedCode}
-                className="w-full py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-40 bg-primary text-primary-foreground hover:opacity-90"
+                className="w-full py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all"
+                style={{
+                  background: selectedCode ? "#FF6B00" : "#FDDCC8",
+                  color: selectedCode ? "#fff" : "#fff",
+                  cursor: selectedCode ? "pointer" : "not-allowed",
+                }}
               >
                 {copied ? (
                   <>

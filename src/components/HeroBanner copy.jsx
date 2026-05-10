@@ -1,38 +1,34 @@
 import { useEffect, useState } from "react";
-import { fetchHeroBanners } from "../services/heroService";
+
+const STATIC_BANNERS = [
+  {
+    _id: "banner-1",
+    imageUrl: "./imgi_2_hero-banner-1-i3JAIU9E.jpg",
+  },
+  {
+    _id: "banner-2",
+    imageUrl: "./imgi_3_hero-banner-2-Dlq_BaZu.jpg",
+  },
+  {
+    _id: "banner-3",
+    imageUrl: "./imgi_4_hero-banner-3-BvIF6OSO.jpg",
+  },
+];
 
 const HeroBanner = () => {
   const [current, setCurrent] = useState(0);
   const [banners, setBanners] = useState([]);
 
-  // Fetch banners from backend
   useEffect(() => {
-    const getBanners = async () => {
-      try {
-        const res = await fetchHeroBanners();
-
-        if (res?.banners) {
-          setBanners(res.banners);
-        } else {
-          setBanners([]);
-        }
-      } catch (err) {
-        console.log(err);
-        setBanners([]);
-      }
-    };
-
-    getBanners();
+    setBanners(STATIC_BANNERS);
   }, []);
 
-  // Reset current slide if needed
   useEffect(() => {
     if (current >= banners.length) {
       setCurrent(0);
     }
   }, [current, banners.length]);
 
-  // Auto slider
   useEffect(() => {
     if (banners.length <= 1) return;
 
@@ -43,7 +39,6 @@ const HeroBanner = () => {
     return () => clearInterval(timer);
   }, [banners.length]);
 
-  // Scroll on click
   const handleBannerClick = () => {
     const el = document.getElementById("bestseller");
 
@@ -105,11 +100,7 @@ const HeroBanner = () => {
               duration-700
               ease-in-out
 
-              ${
-                i === current
-                  ? "opacity-100 z-10"
-                  : "opacity-0 z-0"
-              }
+              ${i === current ? "opacity-100 z-10" : "opacity-0 z-0"}
             `}
           />
         ))
