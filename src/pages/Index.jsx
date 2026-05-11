@@ -3,6 +3,7 @@ import BestsellerStrip from "@/components/BestsellerStrip";
 import FilterBar from "@/components/FilterBar";
 import FloatingButtonStack from "@/components/FloatingButtonStack";
 import FloatingMenuBar from "@/components/FloatingMenuBar";
+import OffersStrip from "@/components/OffersStrip";
 import Footer from "@/components/Footer";
 import GlobalLoader from "@/components/GlobalLoader";
 import Header from "@/components/Header";
@@ -355,7 +356,9 @@ const Index = () => {
             {/* Address bar above HeroBanner, only on mobile */}
             <AddBar />
             <HeroBanner />
-
+<div className="mt-3">
+  <OffersStrip />
+</div>
             <div className="mt-2 md:mt-4 lg:mt-4">
               <FilterBar
                 activeFilter={activeFilter}
