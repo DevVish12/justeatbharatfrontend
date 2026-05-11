@@ -22,3 +22,8 @@ export const updateOrderStatus = async (payload) =>
         method: "PUT",
         body: payload,
     });
+
+export const deleteOrder = async (id) =>
+    apiRequest(`/orders/${encodeURIComponent(String(id))}`, {
+        method: "DELETE",
+    });

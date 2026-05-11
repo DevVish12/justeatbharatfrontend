@@ -11,7 +11,11 @@ import {
 } from "../components/ui/dialog";
 import { toast } from "../hooks/use-toast";
 import { isAdminLoggedIn, logoutAdmin } from "../services/adminService";
-import { listOrders, updateOrderStatus } from "../services/orderService";
+import {
+  deleteOrder,
+  listOrders,
+  updateOrderStatus,
+} from "../services/orderService";
 import AdminSidebar from "./AdminSidebar";
 import { getAdminUrl } from "./adminPaths";
 
@@ -194,6 +198,37 @@ const AdminOrders = () => {
     }
   };
 
+  const handleDeleteOrder = async (order) => {
+    const id = order?.id;
+    if (!id) return;
+
+    const confirmed = window.confirm(
+      `Delete order ${order?.order_id || id}? This cannot be undone.`,
+    );
+    if (!confirmed) return;
+
+    setIsSubmitting(true);
+    try {
+      await deleteOrder(id);
+      setOrders((prev) => prev.filter((o) => o.id !== id));
+      setActiveOrder((current) => (current?.id === id ? null : current));
+      toast({ title: "Order deleted" });
+    } catch (error) {
+      if (isAuthError(error)) {
+        await handleAuthExpired();
+        return;
+      }
+
+      toast({
+        variant: "destructive",
+        title: "Delete failed",
+        description: error.message,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="flex flex-col md:flex-row md:items-stretch">
@@ -204,7 +239,7 @@ const AdminOrders = () => {
             <div className="rounded-xl border border-border bg-card p-5">
               <h1 className="text-2xl font-semibold">Orders</h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                View orders and update order status.
+                View orders, update order status, and delete old orders.
               </p>
             </div>
 
@@ -253,7 +288,7 @@ const AdminOrders = () => {
                       <th className="px-3 py-2 font-medium">Items</th>
                       <th className="px-3 py-2 font-medium">Total</th>
                       <th className="px-3 py-2 font-medium">Created</th>
-                      <th className="px-3 py-2 font-medium">More</th>
+                      <th className="px-3 py-2 font-medium">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -315,14 +350,25 @@ const AdminOrders = () => {
                           {formatDateTime(o.created_at)}
                         </td>
                         <td className="px-3 py-2">
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="secondary"
-                            onClick={() => setActiveOrder(o)}
-                          >
-                            View more
-                          </Button>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => setActiveOrder(o)}
+                            >
+                              View more
+                            </Button>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="destructive"
+                              disabled={isSubmitting || isLoading}
+                              onClick={() => handleDeleteOrder(o)}
+                            >
+                              Delete
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     ))}
