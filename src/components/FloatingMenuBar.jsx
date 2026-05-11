@@ -69,7 +69,7 @@ const FloatingMenuBar = ({
 
       {/* Modal for menu list */}
       {menuOpen && (
-        <div className="fixed inset-0 z-40 bg-black bg-opacity-40 flex items-end lg:hidden">
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-end lg:hidden">
           <div className="w-full max-h-[80vh] bg-white rounded-t-2xl p-4 overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Menu</h3>
