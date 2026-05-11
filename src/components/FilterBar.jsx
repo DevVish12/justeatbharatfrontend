@@ -40,7 +40,7 @@ const FilterBar = ({
     setDraftTypes(
       typeFilters && typeof typeFilters === "object"
         ? typeFilters
-        : { veg: false, nonveg: false, egg: false, new: false }
+        : { veg: false, nonveg: false, egg: false, new: false },
     );
     setFiltersOpen(true);
   };
@@ -73,11 +73,12 @@ const FilterBar = ({
   const PRIMARY_LIGHT = "#FFF4EE";
 
   return (
-    <div className="w-full py-3 px-0" style={{ fontFamily: "'Poppins', sans-serif" }}>
-
+    <div
+      className="w-full py-1.5 md:py-3 px-0"
+      style={{ fontFamily: "'Poppins', sans-serif" }}
+    >
       {/* ── TOP BAR ── */}
       <div className="flex items-center gap-3">
-
         {/* Filter Button */}
         {filters.map((f) => (
           <button
@@ -95,7 +96,10 @@ const FilterBar = ({
               boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
             }}
           >
-            <SlidersHorizontal className="w-[14px] h-[14px]" style={{ color: PRIMARY }} />
+            <SlidersHorizontal
+              className="w-[14px] h-[14px]"
+              style={{ color: PRIMARY }}
+            />
             {f.label}
           </button>
         ))}
@@ -236,19 +240,28 @@ const FilterBar = ({
 
           <div
             className="fb-backdrop"
-            onClick={(e) => { if (e.target === e.currentTarget) setFiltersOpen(false); }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setFiltersOpen(false);
+            }}
           >
             <div className="fb-sheet">
-
               {/* Header */}
-              <div style={{
-                padding: "16px 20px",
-                borderBottom: "1px solid #F3F4F6",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}>
-                <h2 style={{ fontSize: "17px", fontWeight: 700, color: "#1A1A1A" }}>
+              <div
+                style={{
+                  padding: "16px 20px",
+                  borderBottom: "1px solid #F3F4F6",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: "17px",
+                    fontWeight: 700,
+                    color: "#1A1A1A",
+                  }}
+                >
                   Filters
                 </h2>
                 <button
@@ -273,15 +286,16 @@ const FilterBar = ({
 
               {/* Content */}
               <div style={{ padding: "20px", overflowY: "auto", flex: 1 }}>
-
                 {/* Food Type */}
                 <span className="fb-label">Food Type</span>
-                <div style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "10px",
-                  marginBottom: "24px",
-                }}>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "10px",
+                    marginBottom: "24px",
+                  }}
+                >
                   {[
                     { key: "veg", label: "🟢 Veg" },
                     { key: "nonveg", label: "🔴 Non Veg" },
@@ -300,11 +314,18 @@ const FilterBar = ({
 
                 {/* Sort By Price */}
                 <span className="fb-label">Sort By Price</span>
-                <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "24px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    marginBottom: "24px",
+                  }}
+                >
                   {[
                     { value: "low-high", label: "Low to High" },
                     { value: "high-low", label: "High to Low" },
-                    { value: "none",     label: "No Sort" },
+                    { value: "none", label: "No Sort" },
                   ].map((item) => (
                     <button
                       key={item.value}
@@ -312,14 +333,17 @@ const FilterBar = ({
                       className={`fb-sort-row ${draftPriceSort === item.value ? "fb-on" : ""}`}
                     >
                       {item.label}
-                      <span style={{
-                        width: "16px",
-                        height: "16px",
-                        borderRadius: "50%",
-                        display: "inline-block",
-                        background: draftPriceSort === item.value ? PRIMARY : "#D1D5DB",
-                        flexShrink: 0,
-                      }} />
+                      <span
+                        style={{
+                          width: "16px",
+                          height: "16px",
+                          borderRadius: "50%",
+                          display: "inline-block",
+                          background:
+                            draftPriceSort === item.value ? PRIMARY : "#D1D5DB",
+                          flexShrink: 0,
+                        }}
+                      />
                     </button>
                   ))}
                 </div>
@@ -327,7 +351,9 @@ const FilterBar = ({
                 {/* Tags */}
                 <span className="fb-label">Tags</span>
                 {availableTags.length > 0 ? (
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                  <div
+                    style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}
+                  >
                     {availableTags.map((tag) => (
                       <button
                         key={tag}
@@ -339,23 +365,32 @@ const FilterBar = ({
                     ))}
                   </div>
                 ) : (
-                  <p style={{ fontSize: "13px", color: "#ADADAD" }}>No tags available</p>
+                  <p style={{ fontSize: "13px", color: "#ADADAD" }}>
+                    No tags available
+                  </p>
                 )}
               </div>
 
               {/* Footer */}
-              <div style={{
-                padding: "14px 20px",
-                borderTop: "1px solid #F3F4F6",
-                display: "flex",
-                gap: "10px",
-              }}>
+              <div
+                style={{
+                  padding: "14px 20px",
+                  borderTop: "1px solid #F3F4F6",
+                  display: "flex",
+                  gap: "10px",
+                }}
+              >
                 <button
                   className="fb-clear-btn"
                   onClick={() => {
                     setDraftPriceSort("none");
                     setDraftTags([]);
-                    setDraftTypes({ veg: false, nonveg: false, egg: false, new: false });
+                    setDraftTypes({
+                      veg: false,
+                      nonveg: false,
+                      egg: false,
+                      new: false,
+                    });
                   }}
                 >
                   Clear All
@@ -364,7 +399,6 @@ const FilterBar = ({
                   Apply Filters
                 </button>
               </div>
-
             </div>
           </div>
         </>

@@ -50,9 +50,9 @@ const MenuItemCard = ({ item, onItemClick, onQuickAdd }) => {
       {/* ───────────────────────────────────────────
           MOBILE VIEW
       _______________________________________________ */}
-      <div className="block sm:hidden mb-[-12px]">
+      <div className="block sm:hidden">
         <div
-          className="bg-white rounded-2xl border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] flex flex-row items-stretch cursor-pointer overflow-hidden min-h-[115px]"
+          className="bg-white rounded-2xl border border-[#ECE7E2] shadow-[0_2px_10px_rgba(0,0,0,0.06)] flex flex-row items-stretch cursor-pointer overflow-hidden min-h-[115px]"
           onClick={() => onItemClick(item)}
         >
           {/* LEFT CONTENT */}
@@ -103,7 +103,7 @@ const MenuItemCard = ({ item, onItemClick, onQuickAdd }) => {
 
             {/* Description */}
             {item.description && (
-              <p className="text-[12px] text-gray-500 leading-snug line-clamp-2">
+              <p className="text-[12px] text-[#6B6B6B] leading-snug line-clamp-2">
                 {item.description}
               </p>
             )}

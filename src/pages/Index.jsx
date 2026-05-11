@@ -1,9 +1,9 @@
 import AddBar from "@/components/AddBar";
+import OffersStrip from "@/components/OffersStrip";
 import BestsellerStrip from "@/components/BestsellerStrip";
 import FilterBar from "@/components/FilterBar";
 import FloatingButtonStack from "@/components/FloatingButtonStack";
 import FloatingMenuBar from "@/components/FloatingMenuBar";
-import OffersStrip from "@/components/OffersStrip";
 import Footer from "@/components/Footer";
 import GlobalLoader from "@/components/GlobalLoader";
 import Header from "@/components/Header";
@@ -340,8 +340,8 @@ const Index = () => {
     <div className="min-h-screen" style={{ background: "#F7F7F7" }}>
       <Header onMenuClick={() => setSidebarOpen(true)} />
 
-      <div className="max-w-[1280px] mx-auto px-4 pt-2">
-        <div className="flex gap-4 pt-4">
+      <div className="max-w-[1280px] mx-auto px-4 pt-0">
+        <div className="flex gap-4 pt-0 md:pt-2">
           <MenuNavigationSidebar
             activeCategory={activeCategory}
             onCategoryClick={scrollToCategory}
@@ -356,10 +356,10 @@ const Index = () => {
             {/* Address bar above HeroBanner, only on mobile */}
             <AddBar />
             <HeroBanner />
-<div className="mt-3">
-  <OffersStrip />
-</div>
-            <div className="mt-2 md:mt-4 lg:mt-4">
+            <div className="mt-2 md:mt-4">
+              <OffersStrip />
+            </div>
+            <div className="mt-1.5 md:mt-4 lg:mt-4">
               <FilterBar
                 activeFilter={activeFilter}
                 onFilterChange={(next) => {
@@ -412,7 +412,7 @@ const Index = () => {
             {/* ✅ BestsellerStrip — solid white island, no Tailwind bg classes */}
             <div
               id="bestseller"
-              className="mt-0 md:mt-4"
+              className="mt-1.5 md:mt-4"
               style={{ background: "#ffffff" }}
             >
               <BestsellerStrip
@@ -422,7 +422,7 @@ const Index = () => {
               />
             </div>
 
-            <div className="space-y-8 pt-4">
+            <div className="space-y-5 md:space-y-8 pt-3 md:pt-4">
               {Object.entries(filteredByCategory).map(([catName, items]) => (
                 <section key={catName} className="scroll-mt-20">
                   <div
@@ -432,10 +432,14 @@ const Index = () => {
                     data-cat={catName}
                     className="h-px scroll-mt-20"
                   />
-                  <h2 className="text-lg md:text-xl font-bold text-foreground mb-6 text-center">
-                    {catName}
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-6 px-1">
+                    <span className="h-px flex-1 bg-[#E6E2DD]" />
+                    <h2 className="text-[13px] md:text-xl font-bold text-[#4A4A4A] tracking-[0.12em] md:tracking-[0.22em] uppercase text-center leading-none whitespace-nowrap">
+                      {catName}
+                    </h2>
+                    <span className="h-px flex-1 bg-[#E6E2DD]" />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                     {items.map((item) => (
                       <div
                         key={item.id}
