@@ -1,478 +1,5 @@
-// import { useUserAuth } from "@/context/UserAuthContext";
-// import { getFirebaseAuth } from "@/services/firebaseClient";
-// import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-// import { X } from "lucide-react";
-// import { useEffect, useMemo, useRef, useState } from "react";
-
-// const onlyDigits = (value) => String(value || "").replace(/\D/g, "");
-
-// const maskPhone = (digits) => {
-//   const raw = onlyDigits(digits);
-//   if (!raw) {
-//     return "";
-//   }
-
-//   const last4 = raw.slice(-4);
-//   const masked = "*".repeat(Math.max(0, raw.length - 4)) + last4;
-//   return `+91 ${masked}`;
-// };
-
-// const isValidIndianPhone = (digits) => {
-//   const raw = onlyDigits(digits);
-//   return raw.length === 10;
-// };
-
-// const isValidOtp = (digits) => {
-//   const raw = onlyDigits(digits);
-//   return raw.length === 6;
-// };
-
-// const toFriendlyFirebaseError = (err) => {
-//   const code = String(err?.code || "");
-//   if (!code) {
-//     return err?.message || "Request failed. Please try again.";
-//   }
-
-//   switch (code) {
-//     case "auth/operation-not-allowed":
-//       return "Firebase Phone Auth is disabled. Enable it in Firebase Console → Authentication → Sign-in method → Phone.";
-//     case "auth/unauthorized-domain":
-//       return "Unauthorized domain. Add localhost to Firebase Console → Authentication → Settings → Authorized domains.";
-//     case "auth/invalid-phone-number":
-//       return "Invalid phone number.";
-//     case "auth/too-many-requests":
-//       return "Too many attempts. Please try again later.";
-//     case "auth/quota-exceeded":
-//       return "SMS quota exceeded for this Firebase project. Try later or use the Auth Emulator in dev.";
-//     case "auth/captcha-check-failed":
-//       return "reCAPTCHA failed. Refresh the page and try again.";
-//     case "auth/missing-app-credential":
-//       return "reCAPTCHA verification failed. Refresh the page and try again.";
-//     default:
-//       return err?.message || code;
-//   }
-// };
-
-// const OtpLoginModal = ({ open, onClose, onLoginSuccess }) => {
-//   const [step, setStep] = useState("phone"); // 'phone' | 'otp'
-//   const [phone, setPhone] = useState("");
-//   const [otp, setOtp] = useState("");
-//   const [error, setError] = useState("");
-//   const [isSending, setIsSending] = useState(false);
-//   const [isVerifying, setIsVerifying] = useState(false);
-//   const [resendIn, setResendIn] = useState(0);
-
-//   const { completeFirebaseLogin } = useUserAuth();
-
-//   const confirmationResultRef = useRef(null);
-//   const recaptchaRef = useRef(null);
-
-//   const maskedPhone = useMemo(() => maskPhone(phone), [phone]);
-
-//   const reset = () => {
-//     setStep("phone");
-//     setPhone("");
-//     setOtp("");
-//     setError("");
-//     setIsSending(false);
-//     setIsVerifying(false);
-//     setResendIn(0);
-
-//     confirmationResultRef.current = null;
-
-//     try {
-//       recaptchaRef.current?.clear?.();
-//     } catch {
-//       // ignore
-//     }
-//     recaptchaRef.current = null;
-//   };
-
-//   const close = () => {
-//     onClose?.();
-//     reset();
-//   };
-
-//   useEffect(() => {
-//     if (!open) {
-//       return;
-//     }
-
-//     if (step !== "otp" || resendIn <= 0) {
-//       return;
-//     }
-
-//     const timer = window.setInterval(() => {
-//       setResendIn((prev) => (prev > 0 ? prev - 1 : 0));
-//     }, 1000);
-
-//     return () => window.clearInterval(timer);
-//   }, [open, step, resendIn]);
-
-//   useEffect(() => {
-//     if (!open) {
-//       return;
-//     }
-
-//     const handleKeyDown = (event) => {
-//       if (event.key === "Escape") {
-//         close();
-//       }
-//     };
-
-//     document.addEventListener("keydown", handleKeyDown);
-//     return () => document.removeEventListener("keydown", handleKeyDown);
-//   }, [open]);
-
-//   useEffect(() => {
-//     if (!open) {
-//       return;
-//     }
-
-//     const previousOverflow = document.body.style.overflow;
-//     document.body.style.overflow = "hidden";
-
-//     return () => {
-//       document.body.style.overflow = previousOverflow;
-//     };
-//   }, [open]);
-
-//   useEffect(() => {
-//     if (open) {
-//       setError("");
-//     }
-//   }, [open, step]);
-
-//   const handleBackdropClick = (event) => {
-//     if (event.target === event.currentTarget) {
-//       close();
-//     }
-//   };
-
-//   const handleSendOtp = async (event) => {
-//     event.preventDefault();
-
-//     if (isSending || isVerifying) {
-//       return;
-//     }
-
-//     if (!isValidIndianPhone(phone)) {
-//       setError("Enter a valid 10-digit mobile number");
-//       return;
-//     }
-
-//     setError("");
-//     setIsSending(true);
-//     try {
-//       const auth = getFirebaseAuth();
-
-//       if (!recaptchaRef.current) {
-//         recaptchaRef.current = new RecaptchaVerifier(
-//           auth,
-//           "firebase-recaptcha-container",
-//           {
-//             size: "invisible",
-//           },
-//         );
-//       }
-
-//       const fullPhone = `+91${onlyDigits(phone)}`;
-//       const confirmation = await signInWithPhoneNumber(
-//         auth,
-//         fullPhone,
-//         recaptchaRef.current,
-//       );
-//       confirmationResultRef.current = confirmation;
-
-//       setStep("otp");
-//       setOtp("");
-//       setResendIn(60);
-//     } catch (err) {
-//       setError(toFriendlyFirebaseError(err));
-//     } finally {
-//       setIsSending(false);
-//     }
-//   };
-
-//   const handleVerifyOtp = async (event) => {
-//     event.preventDefault();
-
-//     if (isSending || isVerifying) {
-//       return;
-//     }
-
-//     if (!isValidOtp(otp)) {
-//       setError("Enter the 6-digit OTP");
-//       return;
-//     }
-
-//     setError("");
-//     setIsVerifying(true);
-//     try {
-//       const confirmation = confirmationResultRef.current;
-//       if (!confirmation) {
-//         setError("Please request a new OTP");
-//         return;
-//       }
-
-//       const credential = await confirmation.confirm(onlyDigits(otp));
-//       const idToken = await credential.user.getIdToken();
-
-//       await completeFirebaseLogin(idToken);
-//       onLoginSuccess?.();
-//       close();
-//     } catch (err) {
-//       setError(toFriendlyFirebaseError(err));
-//     } finally {
-//       setIsVerifying(false);
-//     }
-//   };
-
-//   const handleChangeNumber = () => {
-//     setStep("phone");
-//     setOtp("");
-//     setError("");
-//     setResendIn(0);
-
-//     confirmationResultRef.current = null;
-//   };
-
-//   const handleResend = async () => {
-//     if (resendIn > 0 || isSending || isVerifying) {
-//       return;
-//     }
-
-//     setError("");
-//     setIsSending(true);
-//     try {
-//       const auth = getFirebaseAuth();
-
-//       if (!recaptchaRef.current) {
-//         recaptchaRef.current = new RecaptchaVerifier(
-//           auth,
-//           "firebase-recaptcha-container",
-//           {
-//             size: "invisible",
-//           },
-//         );
-//       }
-
-//       const fullPhone = `+91${onlyDigits(phone)}`;
-//       const confirmation = await signInWithPhoneNumber(
-//         auth,
-//         fullPhone,
-//         recaptchaRef.current,
-//       );
-//       confirmationResultRef.current = confirmation;
-//       setResendIn(60);
-//     } catch (err) {
-//       setError(toFriendlyFirebaseError(err));
-//     } finally {
-//       setIsSending(false);
-//     }
-//   };
-
-//   if (!open) {
-//     return null;
-//   }
-
-//   return (
-//     <div
-//       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200"
-//       onMouseDown={handleBackdropClick}
-//       role="dialog"
-//       aria-modal="true"
-//       aria-label="OTP login"
-//     >
-//       <div className="w-full max-w-md overflow-hidden rounded-2xl border border-border bg-card shadow-lg animate-in zoom-in-95 duration-200">
-//         <div className="flex items-center justify-between gap-3 border-b border-border bg-primary px-5 py-4 text-primary-foreground">
-//           <div>
-//             <p className="text-sm opacity-90">Welcome back</p>
-//             <h2 className="text-lg font-semibold leading-tight">
-//               Login with OTP
-//             </h2>
-//           </div>
-
-//           <button
-//             type="button"
-//             onClick={close}
-//             className="rounded-md p-2 hover:bg-black/10 transition-colors"
-//             aria-label="Close"
-//           >
-//             <X className="h-5 w-5" />
-//           </button>
-//         </div>
-
-//         <div className="p-5">
-//           <div className="mb-4 flex items-center gap-2 text-sm">
-//             <div
-//               className={`h-2.5 flex-1 rounded-full ${
-//                 step === "phone" ? "bg-primary" : "bg-primary/70"
-//               }`}
-//             />
-//             <div
-//               className={`h-2.5 flex-1 rounded-full ${
-//                 step === "otp" ? "bg-primary" : "bg-muted"
-//               }`}
-//             />
-//           </div>
-
-//           <div className="relative min-h-[300px]">
-//             <div
-//               className={`absolute inset-0 transition-all duration-300 ${
-//                 step === "phone"
-//                   ? "opacity-100 translate-x-0"
-//                   : "opacity-0 -translate-x-6 pointer-events-none"
-//               }`}
-//             >
-//               <div className="rounded-xl border border-border bg-muted/30 p-4">
-//                 <form onSubmit={handleSendOtp} className="space-y-4">
-//                   <div>
-//                     <label className="block text-sm font-semibold text-foreground mb-2">
-//                       Mobile number
-//                     </label>
-//                     <div className="flex gap-2">
-//                       <div className="flex items-center rounded-lg border border-border bg-background px-3 text-sm font-medium text-muted-foreground">
-//                         +91
-//                       </div>
-//                       <input
-//                         autoFocus
-//                         type="tel"
-//                         inputMode="numeric"
-//                         value={phone}
-//                         onChange={(e) =>
-//                           setPhone(onlyDigits(e.target.value).slice(0, 10))
-//                         }
-//                         disabled={isSending || isVerifying}
-//                         className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-//                         placeholder="Enter 10-digit number"
-//                         aria-label="Phone number"
-//                         required
-//                       />
-//                     </div>
-//                     <p className="mt-2 text-xs text-muted-foreground">
-//                       We’ll send a one-time password to this number.
-//                     </p>
-//                   </div>
-
-//                   {error ? (
-//                     <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3">
-//                       <p className="text-sm text-destructive">{error}</p>
-//                     </div>
-//                   ) : null}
-
-//                   <button
-//                     type="submit"
-//                     disabled={isSending || isVerifying}
-//                     className="w-full rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
-//                   >
-//                     {isSending ? "Sending..." : "Send OTP"}
-//                   </button>
-
-//                   <div id="firebase-recaptcha-container" />
-//                 </form>
-//               </div>
-//             </div>
-
-//             <div
-//               className={`absolute inset-0 transition-all duration-300 ${
-//                 step === "otp"
-//                   ? "opacity-100 translate-x-0"
-//                   : "opacity-0 translate-x-6 pointer-events-none"
-//               }`}
-//             >
-//               <div className="rounded-xl border border-border bg-muted/30 p-4">
-//                 <form onSubmit={handleVerifyOtp} className="space-y-4">
-//                   <div className="flex items-start justify-between gap-3">
-//                     <p className="text-sm text-muted-foreground">
-//                       OTP sent to{" "}
-//                       <span className="font-semibold text-foreground">
-//                         {maskedPhone}
-//                       </span>
-//                     </p>
-//                     <button
-//                       type="button"
-//                       onClick={handleChangeNumber}
-//                       className="text-sm font-semibold text-primary hover:opacity-90"
-//                     >
-//                       Change
-//                     </button>
-//                   </div>
-
-//                   <div>
-//                     <label className="block text-sm font-semibold text-foreground mb-2">
-//                       Enter OTP
-//                     </label>
-//                     <input
-//                       autoFocus
-//                       type="tel"
-//                       inputMode="numeric"
-//                       value={otp}
-//                       onChange={(e) =>
-//                         setOtp(onlyDigits(e.target.value).slice(0, 6))
-//                       }
-//                       disabled={isSending || isVerifying}
-//                       className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-foreground tracking-[0.35em] focus:outline-none focus:ring-2 focus:ring-primary"
-//                       placeholder="••••••"
-//                       aria-label="OTP"
-//                       required
-//                     />
-//                     <div className="mt-2 flex items-center justify-between gap-3 text-xs text-muted-foreground">
-//                       <p>OTP expires in 5 minutes.</p>
-//                       <p>
-//                         {resendIn > 0
-//                           ? `Resend in ${resendIn}s`
-//                           : "You can resend OTP"}
-//                       </p>
-//                     </div>
-//                   </div>
-
-//                   {error ? (
-//                     <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3">
-//                       <p className="text-sm text-destructive">{error}</p>
-//                     </div>
-//                   ) : null}
-
-//                   <button
-//                     type="submit"
-//                     disabled={isSending || isVerifying}
-//                     className="w-full rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
-//                   >
-//                     {isVerifying ? "Verifying..." : "Verify & Login"}
-//                   </button>
-
-//                   <button
-//                     type="button"
-//                     onClick={handleResend}
-//                     disabled={resendIn > 0 || isSending || isVerifying}
-//                     className="w-full rounded-lg border border-border bg-background px-6 py-3 font-semibold text-foreground hover:bg-muted/50 transition-colors disabled:opacity-60"
-//                   >
-//                     Resend OTP
-//                   </button>
-
-//                   <button
-//                     type="button"
-//                     onClick={close}
-//                     disabled={isSending || isVerifying}
-//                     className="w-full rounded-lg border border-border bg-background px-6 py-3 font-semibold text-foreground hover:bg-muted/50 transition-colors disabled:opacity-60"
-//                   >
-//                     Cancel
-//                   </button>
-//                 </form>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default OtpLoginModal;
-
 import { useUserAuth } from "@/context/UserAuthContext";
-import { getFirebaseAuth } from "@/services/firebaseClient";
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { resendOtp, sendOtp } from "@/services/authApi";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 const onlyDigits = (value) => String(value || "").replace(/\D/g, "");
@@ -488,28 +15,8 @@ const maskPhone = (digits) => {
 const isValidIndianPhone = (digits) => onlyDigits(digits).length === 10;
 const isValidOtp = (digits) => onlyDigits(digits).length === 6;
 
-const toFriendlyFirebaseError = (err) => {
-  const code = String(err?.code || "");
-  if (!code) return err?.message || "Request failed. Please try again.";
-  switch (code) {
-    case "auth/operation-not-allowed":
-      return "Firebase Phone Auth is disabled. Enable it in Firebase Console → Authentication → Sign-in method → Phone.";
-    case "auth/unauthorized-domain":
-      return "Unauthorized domain. Add localhost to Firebase Console → Authentication → Settings → Authorized domains.";
-    case "auth/invalid-phone-number":
-      return "Invalid phone number.";
-    case "auth/too-many-requests":
-      return "Too many attempts. Please try again later.";
-    case "auth/quota-exceeded":
-      return "SMS quota exceeded for this Firebase project. Try later or use the Auth Emulator in dev.";
-    case "auth/captcha-check-failed":
-      return "reCAPTCHA failed. Refresh the page and try again.";
-    case "auth/missing-app-credential":
-      return "reCAPTCHA verification failed. Refresh the page and try again.";
-    default:
-      return err?.message || code;
-  }
-};
+const toFriendlyOtpError = (err) =>
+  err?.message || "Request failed. Please try again.";
 
 const OtpLoginModal = ({ open, onClose, onLoginSuccess }) => {
   const [step, setStep] = useState("phone");
@@ -520,9 +27,8 @@ const OtpLoginModal = ({ open, onClose, onLoginSuccess }) => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [resendIn, setResendIn] = useState(0);
 
-  const { completeFirebaseLogin } = useUserAuth();
-  const confirmationResultRef = useRef(null);
-  const recaptchaRef = useRef(null);
+  const { completeOtpLogin } = useUserAuth();
+  const lastPhoneSentRef = useRef(null);
   const maskedPhone = useMemo(() => maskPhone(phone), [phone]);
 
   const reset = () => {
@@ -533,11 +39,7 @@ const OtpLoginModal = ({ open, onClose, onLoginSuccess }) => {
     setIsSending(false);
     setIsVerifying(false);
     setResendIn(0);
-    confirmationResultRef.current = null;
-    try {
-      recaptchaRef.current?.clear?.();
-    } catch {}
-    recaptchaRef.current = null;
+    lastPhoneSentRef.current = null;
   };
 
   const close = () => {
@@ -591,25 +93,14 @@ const OtpLoginModal = ({ open, onClose, onLoginSuccess }) => {
     setError("");
     setIsSending(true);
     try {
-      const auth = getFirebaseAuth();
-      if (!recaptchaRef.current) {
-        recaptchaRef.current = new RecaptchaVerifier(
-          auth,
-          "firebase-recaptcha-container",
-          { size: "invisible" },
-        );
-      }
-      const confirmation = await signInWithPhoneNumber(
-        auth,
-        `+91${onlyDigits(phone)}`,
-        recaptchaRef.current,
-      );
-      confirmationResultRef.current = confirmation;
+      const raw = onlyDigits(phone);
+      await sendOtp(raw);
+      lastPhoneSentRef.current = raw;
       setStep("otp");
       setOtp("");
       setResendIn(60);
     } catch (err) {
-      setError(toFriendlyFirebaseError(err));
+      setError(toFriendlyOtpError(err));
     } finally {
       setIsSending(false);
     }
@@ -625,18 +116,17 @@ const OtpLoginModal = ({ open, onClose, onLoginSuccess }) => {
     setError("");
     setIsVerifying(true);
     try {
-      const confirmation = confirmationResultRef.current;
-      if (!confirmation) {
+      const rawPhone = lastPhoneSentRef.current || onlyDigits(phone);
+      if (!rawPhone || rawPhone.length !== 10) {
         setError("Please request a new OTP");
         return;
       }
-      const credential = await confirmation.confirm(onlyDigits(otp));
-      const idToken = await credential.user.getIdToken();
-      await completeFirebaseLogin(idToken);
+
+      await completeOtpLogin({ phone: rawPhone, code: onlyDigits(otp) });
       onLoginSuccess?.();
       close();
     } catch (err) {
-      setError(toFriendlyFirebaseError(err));
+      setError(toFriendlyOtpError(err));
     } finally {
       setIsVerifying(false);
     }
@@ -647,7 +137,7 @@ const OtpLoginModal = ({ open, onClose, onLoginSuccess }) => {
     setOtp("");
     setError("");
     setResendIn(0);
-    confirmationResultRef.current = null;
+    lastPhoneSentRef.current = null;
   };
 
   const handleResend = async () => {
@@ -655,23 +145,12 @@ const OtpLoginModal = ({ open, onClose, onLoginSuccess }) => {
     setError("");
     setIsSending(true);
     try {
-      const auth = getFirebaseAuth();
-      if (!recaptchaRef.current) {
-        recaptchaRef.current = new RecaptchaVerifier(
-          auth,
-          "firebase-recaptcha-container",
-          { size: "invisible" },
-        );
-      }
-      const confirmation = await signInWithPhoneNumber(
-        auth,
-        `+91${onlyDigits(phone)}`,
-        recaptchaRef.current,
-      );
-      confirmationResultRef.current = confirmation;
+      const raw = lastPhoneSentRef.current || onlyDigits(phone);
+      await resendOtp(raw);
+      lastPhoneSentRef.current = raw;
       setResendIn(60);
     } catch (err) {
-      setError(toFriendlyFirebaseError(err));
+      setError(toFriendlyOtpError(err));
     } finally {
       setIsSending(false);
     }
@@ -806,8 +285,6 @@ const OtpLoginModal = ({ open, onClose, onLoginSuccess }) => {
               >
                 {isSending ? "Sending…" : "Send OTP"}
               </button>
-
-              <div id="firebase-recaptcha-container" />
             </form>
           )}
 
