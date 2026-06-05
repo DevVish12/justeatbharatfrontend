@@ -105,27 +105,39 @@ const Footer = () => {
             <ul className="space-y-2">
 
               <li>
-                <a className="text-sm text-gray-600 hover:text-[#F97415] transition">
+                <Link
+                  to="/help-center"
+                  className="text-sm text-gray-600 hover:text-[#F97415] transition"
+                >
                   Help Center
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a className="text-sm text-gray-600 hover:text-[#F97415] transition">
+                <Link
+                  to="/privacy-policy"
+                  className="text-sm text-gray-600 hover:text-[#F97415] transition"
+                >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a className="text-sm text-gray-600 hover:text-[#F97415] transition">
+                <Link
+                  to="/terms-and-conditions"
+                  className="text-sm text-gray-600 hover:text-[#F97415] transition"
+                >
                   Terms & Conditions
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a className="text-sm text-gray-600 hover:text-[#F97415] transition">
+                <Link
+                  to="/refund-policy"
+                  className="text-sm text-gray-600 hover:text-[#F97415] transition"
+                >
                   Refund Policy
-                </a>
+                </Link>
               </li>
 
             </ul>
@@ -183,9 +195,15 @@ const Footer = () => {
             <p>© {currentYear} JustEat Bharat. All rights reserved.</p>
 
             <div className="flex gap-6">
-              <a className="hover:text-[#F97415] transition">Privacy Policy</a>
-              <a className="hover:text-[#F97415] transition">Terms of Service</a>
-              <a className="hover:text-[#F97415] transition">Cookies</a>
+              <Link to="/privacy-policy" className="hover:text-[#F97415] transition">
+                Privacy Policy
+              </Link>
+              <Link to="/terms-and-conditions" className="hover:text-[#F97415] transition">
+                Terms & Conditions
+              </Link>
+              <Link to="/refund-policy" className="hover:text-[#F97415] transition">
+                Refund Policy
+              </Link>
             </div>
 
           </div>
