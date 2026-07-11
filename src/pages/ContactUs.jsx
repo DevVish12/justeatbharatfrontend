@@ -22,7 +22,7 @@ const contactCards = [
     icon: MapPin,
     title: "Address",
     content: [
-      "SCO 126A, Ground Floor, Near SBI Bank, Opp. Gurudwara Singh Sabha",
+      "SCO 126A, Patiala Road, Near SBI Bank, Dashmesh Colony",
       "Zirakpur, Punjab - 140603",
     ],
     note: "Punjab, India",

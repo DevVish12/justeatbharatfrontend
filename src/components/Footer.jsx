@@ -177,7 +177,7 @@ const Footer = () => {
               <li className="flex items-start gap-2">
                 <MapPin size={16} className="text-[#F97415] mt-1" />
                 <span className="text-sm text-gray-600">
-                  Zirakpur, Punjab - 140603
+                 SCO 126A, Patiala Road, Near SBI Bank, Dashmesh Colony, Zirakpur, 140603
                 </span>
               </li>
 
